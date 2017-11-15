@@ -6,9 +6,7 @@ platform:
 
 configuration:
   - Release
-  - Debug
   - Light-Release
-  - Light-Debug
 
 environment:
   matrix:
@@ -34,10 +32,6 @@ install:
         $env:VCVARS_PLATFORM="amd64"
         $env:OPENSSL_PF="Win64"
         $env:ARTIFACT="OpenSC-win64_vs${env:VSVER}-${env:CONFIGURATION}.msi"
-      }
-  - ps: >-
-      If ($env:Configuration -Like "*Debug*") {
-        $env:NMAKE_EXTRA="DEBUG_DEF=/DDEBUG ${env:NMAKE_EXTRA}"
       }
   - ps: >-
       If (!($env:Configuration -Like "*Light*")) {
@@ -101,10 +95,7 @@ build_script:
   - move OpenSC.msi %ARTIFACT%
   - appveyor PushArtifact %ARTIFACT%
   # put all pdb files for dump analysis, but this consumes approx 100 MB per build
-  - ps: >-
-      If ($env:Configuration -Like "*Debug*") {
-        Get-ChildItem -recurse c:\projects\OpenSC -exclude vc*.pdb *.pdb | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
-      }
+  - ps: Get-ChildItem -recurse c:\projects\OpenSC -exclude vc*.pdb *.pdb | % { Push-AppveyorArtifact $_.FullName -FileName $_.Name }
 
 cache:
   - C:\zlib -> appveyor.yml
