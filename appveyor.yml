@@ -96,8 +96,7 @@ build_script:
   - appveyor PushArtifact %ARTIFACT%.msi
   # put all pdb files for dump analysis, but this consumes approx 100 MB per build
   - md %ARTIFACT%-Debug
-  - ps: Get-ChildItem -recurse c:\projects\OpenSC *.dll | % { move $_.DirectoryName/$_Name.pdb ${env:ARTIFACT}-Debug }
-  - ps: Get-ChildItem -recurse c:\projects\OpenSC *.exe | % { move $_.DirectoryName/$_Name.pdb ${env:ARTIFACT}-Debug }
+  - ps: Get-ChildItem -recurse c:\projects\OpenSC *.dll *.exe | % { move {[System.IO.Path]::ChangeExtension($_.FullName, ".pdb")} ${env:ARTIFACT}-Debug }
   - 7z %ARTIFACT%-Debug.zip %ARTIFACT%-Debug
   - appveyor PushArtifact %ARTIFACT%-Debug.zip
 
